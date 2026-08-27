@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { AxiosBaseFunc } from '../../../config/api/axiosBase';
+import { createCookieFunc } from '../../../config/createCookie';
+import {useNavigate} from "react-router-dom"
 
 type emailType = `${string}@${string}.${string}`;
 
@@ -10,6 +12,9 @@ function Register() {
   const [Email, setEmail] = useState<emailType>('' as emailType);
   const [Phoneno, setPhoneno] = useState<string>('');
   const [Password, setPassword] = useState<string>('');
+
+  // navigation for
+  const navigate = useNavigate();
 
   AxiosBaseFunc();
   const [Error , setError] = useState<{
@@ -33,7 +38,7 @@ function Register() {
     }
 
     
-    const phonenoRegex =  /^[6-9][0-9]{9}$/;
+    const phonenoRegex =  /^[6-9][0-9]{9}$/; //must indian no 6-9 and 0-9 numbers long
     if(!Phoneno){
       tempErrors.phoneno = "Phone no. is required"
     }else if(! phonenoRegex.test(Phoneno)){
@@ -59,6 +64,14 @@ const handleSubmitData = (e) =>{
 
       if(validationForm()){
         console.log("Form Dated is valid")
+
+         if(createCookieFunc(Email)){ //if cookie is stored successfully then redirect
+              navigate('/dashboard')
+         }
+         else{
+           return 
+         }
+
       }
       else{
         console.log("Form Data is not Valid ")

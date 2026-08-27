@@ -7,6 +7,7 @@ import AuthLayout from "../layout/AuthLayout";
 import DashboardLayout from "../layout/DashboardLayout";
 import ProfilePage from "../pages/dashboard/profile/ProfilePage";
 import Login from "../pages/auth/components/login";
+import Marketing from "../pages/marketing/Marketing";
 
 
 export const router = createBrowserRouter([
@@ -17,7 +18,7 @@ export const router = createBrowserRouter([
         children:[
             {
                 index:true,
-                element:<Dashboard/>
+                element:<Marketing/>
 
             },
             {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
                 path:'dashboard',
                 element:<DashboardLayout/>,
                 children:[
+                    {
+                        index:true,
+                        element:<Dashboard/>
+                    },
                     {
                         path:'profile',
                         element:<ProfilePage/>
