@@ -1,12 +1,7 @@
-import { AxiosBaseFunc } from "./axiosBase";
-const  axInstance = AxiosBaseFunc();
+import { ax } from "./axiosBase"
 
-export const fetchJsonPlaceholderDummy = async () =>{
-  const result = await  axInstance.get('/todos');
-  console.log(result);
-  return result;
-    }
-
-// const DummyDataInceptors = async ()=>{
-//     const result = await axInstance.get()
-// }]
+ 
+export const getUserFromDummyJson = async()=>{
+  const result = await ax.get('/user/3');
+    return result.data;
+}
