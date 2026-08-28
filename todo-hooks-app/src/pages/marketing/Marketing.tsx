@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom'
 function Marketing() {
   return (
 
-        <div>DashboardLayout
+        <div>Marketing page
           <Outlet/>
         </div>
   )
