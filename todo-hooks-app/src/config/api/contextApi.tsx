@@ -12,6 +12,12 @@ interface UserType {
   email:string,
   [key:string]:unknown
 }
+interface userAuthObjType {
+    accessToken: string,
+    refreshToken:string,
+  [key:string]:unknown,
+
+}
 
 export const UserProvider = ({children})=>{
 
@@ -23,6 +29,12 @@ export const UserProvider = ({children})=>{
               firstName: ' ',
          
       }); //hybrid -> when i know little what would in obj
+
+      const [userAuthObj, setUserAuthObj]  = useState<userAuthObjType | null >({
+        accessToken:'',
+        refreshToken:''
+      });
+
       const [loading, setLoading] = useState<boolean>(true);
 
 
@@ -51,10 +63,12 @@ export const UserProvider = ({children})=>{
    
       },[]);
 
+      // const updateUserObj()
+
 
 
       return (
-          <UserContext.Provider value={{getUserData, loading, userobj}}>
+          <UserContext.Provider value={{getUserData, setLoading, loading, userobj, setUserAuthObj, userAuthObj}}>
             {children}
             </UserContext.Provider>
       )
