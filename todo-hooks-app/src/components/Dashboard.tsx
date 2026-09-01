@@ -22,29 +22,34 @@ function Dashboard() {
 
   useEffect(() => {
 
+    
     if (!userobj) {
       navigate('/auth/login');
     }
     
-    console.log("We Got Token")
-    if(userAuthObj.accessToken){
+    (async()=>{
 
+      if(userAuthObj.accessToken){
+        console.log("get token ");
+        console.log("token into interceptors -> api hit -> /auth/me");
+        const Autheme = await getCurrentUser(axSecure);
+        console.log("Authenticated User : ", Autheme);
+        // console.log(`inside IF userAuthObj : ` ,userAuthObj);
+      }
+    })();
 
-      getCurrentUser(axSecure);
-      console.log(`inside IF userAuthObj : ` ,userAuthObj);
-    }
-    //   // getAuthTokenFunc();
-
+    
   }, [userAuthObj]);
 
 
+
   if (loading) {
-    return <h1>loading.. </h1>
-  }
+      return <h1>loading.. </h1>
+      }
+      
 
   const userObjUpdateToken = async (e) => {
     e.preventDefault();
-    console.log("calling userGetTOken");
     if (userobj) {
 
       try {
@@ -55,6 +60,9 @@ function Dashboard() {
           password: userobj.password,
         })
         setUserAuthObj(reuslt);
+
+        console.log("{username,password} call -> api hit -> /auth/login -> userAuthObj")
+
        
       } catch (error) {
         throw new Error ("Error While calling getAuthTOkenFunc", error);

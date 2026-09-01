@@ -1,8 +1,9 @@
 import { createContext , useState, useContext, useEffect, useCallback} from "react";
-import { getUserFromDummyJson } from "./apiMethods";
+import { getUserObj } from "./apiMethods";
 
 const UserContext = createContext(null);
 
+//UserType -> For /auth/login for type safety,
 interface UserType {
   username: string,
   age:number,
@@ -12,6 +13,7 @@ interface UserType {
   email:string,
   [key:string]:unknown
 }
+//
 interface userAuthObjType {
     accessToken: string,
     refreshToken:string,
@@ -38,37 +40,34 @@ export const UserProvider = ({children})=>{
       const [loading, setLoading] = useState<boolean>(true);
 
 
-      const getUserData  =  useCallback( async ()=>{
+      // const getUserData  =  useCallback( async ()=>{
 
-        try {
-            setLoading(true);
-            const data = await getUserFromDummyJson();
-            // console.log('data from createContext', userobj)
-            setUserobj(data);
-            return data;
+      //   try {
+      //       setLoading(true);
+      //       // const data = await getUserObj();
+      //       // setUserobj(data);
+      //       // return data;
             
-          } catch (error) {
-            throw new Error ("Could not Fetch User Data");
+      //     } catch (error) {
+      //       throw new Error ("Could not Fetch User Data");
             
-          }
-          finally{
-            setLoading(false);
-          }
+      //     }
+      //     finally{
+      //       setLoading(false);
+      //     }
 
-      }, []);
+      // }, []);
 
 
       useEffect(()=>{
-        getUserData();
+        // getUserData();
    
       },[]);
-
-      // const updateUserObj()
 
 
 
       return (
-          <UserContext.Provider value={{getUserData, setLoading, loading, userobj, setUserAuthObj, userAuthObj}}>
+          <UserContext.Provider value={{setLoading, loading, setUserobj, userobj, setUserAuthObj, userAuthObj}}>
             {children}
             </UserContext.Provider>
       )

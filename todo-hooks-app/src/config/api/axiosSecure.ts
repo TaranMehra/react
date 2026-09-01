@@ -14,7 +14,12 @@ export const useSecureTokenAxCustomHooks = ()=>{
         config.headers.Authorization = `Bearer ${token}`;
         return config;
         
-    })
+    },
+    (error)=>{
+
+        return Promise.reject(error);
+
+        })
 
     return axSecure;
 }
