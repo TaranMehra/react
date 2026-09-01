@@ -2,8 +2,8 @@ import axios from "axios";
 
 
 export const ax =  axios.create({
-        baseURL:"https://dummyjson.com",
-        withCredentials:true,
+        baseURL:"http://localhost:3000/api",
+        // withCredentials:true,
     });
 
 
