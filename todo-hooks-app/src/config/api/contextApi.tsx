@@ -1,5 +1,5 @@
 import { createContext , useState, useContext, useEffect, useCallback} from "react";
-import { getUserObj } from "./apiMethods";
+// import { getUserObj } from "./apiMethods";
 
 const UserContext = createContext(null);
 
@@ -23,6 +23,9 @@ interface userAuthObjType {
 
 export const UserProvider = ({children})=>{
 
+
+  
+    const  [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [userobj, setUserobj] = useState<UserType>({
               username: ' ',
               email: ' ',
@@ -37,39 +40,48 @@ export const UserProvider = ({children})=>{
         refreshToken:''
       });
 
-      const [loading, setLoading] = useState<boolean>(true);
+      const [loading, setLoading] = useState<boolean>(false);
+      const [isredirection, setIsredirection] = useState<boolean>(false);
 
 
-      // const getUserData  =  useCallback( async ()=>{
 
-      //   try {
-      //       setLoading(true);
-      //       // const data = await getUserObj();
-      //       // setUserobj(data);
-      //       // return data;
-            
-      //     } catch (error) {
-      //       throw new Error ("Could not Fetch User Data");
-            
-      //     }
-      //     finally{
-      //       setLoading(false);
-      //     }
+      const login = async (token, username)=>{
+        localStorage.setItem('token' , token);
+        localStorage.setItem('username', username);
+        setIsAuthenticated(!!token)
+      }
 
-      // }, []);
+      const logout = ():void =>{
+        localStorage.removeItem('token');
+      }
 
+      const getToken = ():string =>{
+        if(isAuthenticated){
+          const token = localStorage.getItem('token');
+          return token;
+        }
+      }
+      
+      const getUsername = ():string =>{
+        if(isAuthenticated){
+          const username = localStorage.getItem('username');
+          return username;
+        }
+      }
 
       useEffect(()=>{
-        // getUserData();
+        //once the app load , check whether user is persist
+        const token = localStorage.getItem('token');
+        setIsAuthenticated(!!token);
    
       },[]);
 
 
 
       return (
-          <UserContext.Provider value={{setLoading, loading, setUserobj, userobj, setUserAuthObj, userAuthObj}}>
+          <UserContext.Provider value={{isAuthenticated, login, logout, setLoading, loading, getToken, getUsername, setIsredirection, isredirection, setUserobj, userobj, setUserAuthObj, userAuthObj}}>
             {children}
-            </UserContext.Provider>
+          </UserContext.Provider>
       )
 }
 

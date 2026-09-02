@@ -1,4 +1,7 @@
 import { ax } from "./axiosOpen"
+import { axSecure } from "./axiosSecure";
+// import { useSecureTokenAxCustomHooks } from "./axiosSecure";
+import { useUserData } from "./contextApi";
 // 
 
 
@@ -40,11 +43,24 @@ export const testapi = async()=>{
 
 export const registerUser = async<T>(payload:T)=>{
   const result = await ax.post("/auth/register", payload);
-  return result;
+  return result.data;
 }
 
 
 export const loginUser = async<T>(payload:T)=>{
   const result = await ax.post("/auth/login", payload);
-  return result;
+  return result.data;
+}
+
+
+
+// const {getToken} = useUserData();
+// const token = getToken()
+// const axSecure = useSecureTokenAxCustomHooks(token);
+
+//app path (secure paths)
+export const getUserDataThroughToken = async<T>(payload:T)=>{
+  const result = await axSecure.post("/app/dash/user/me", payload);
+  // const result = await axSecure.get("/hello");
+return result.data;
 }

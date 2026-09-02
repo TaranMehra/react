@@ -12,8 +12,9 @@ const app = express();
 
 app.use(
     cors({
-        // origin:"*"
+        // origin:"*",
         origin:"http://localhost:5173",
+        credentials:true,
     }));
 
 
@@ -23,6 +24,7 @@ export const dbCon = await createDBConnection(); //establinshing db connection
 app.use(express.json());
 app.use("/api", router);
 app.get('/hello',(req, res)=>{
+    console.log("hello guys");
     return res.json({statusCode: 200});
 
 })

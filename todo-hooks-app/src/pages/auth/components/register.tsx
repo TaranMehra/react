@@ -1,12 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 // import { AxiosBaseFunc } from '../../../config/api/axiosBase';
 // import { createCookieFunc } from '../../../config/createCookie';
-import {useNavigate} from "react-router-dom"
+import {redirect, useNavigate} from "react-router-dom"
 import { registerUser } from '../../../config/api/apiMethods';
+import { useUserData } from '../../../config/api/contextApi';
 
 type emailType = `${string}@${string}.${string}`;
 
 function Register() {
+
+
+    const {isAuthenticated ,setLoading, loading,setIsredirection, isredirection, setUserobj, userobj, setUserAuthObj, userAuthObj} = useUserData();
+  
 
   const [username, setUsername] = useState<string>('');
   // const [Lastname, setLastname] = useState<string | undefined>('');
@@ -70,22 +75,36 @@ const handleSubmitData = async(e) =>{
           Phoneno,
           Password,
         }
+        
+        setLoading(true);
         const result = await registerUser(payload);
-        console.log(result);  
-
-      //    if(createCookieFunc(Email)){ //if cookie is stored successfully then redirect
-      //         navigate('/dashboard')
-      //    }
-      //    else{
-      //      return 
-      //    }
-
+           const {success , data } = result;
+           if(success){
+            setLoading(false);
+            setIsredirection(true);
+            setTimeout(()=>{
+              navigate('/auth/login');
+            }, 2000)
+           }
+        
       }
-      // else{
-      //   console.log("Form Data is not Valid ")
-      // }
+    }
 
-}
+    if(loading){
+      return <h1>loading</h1>
+    }
+
+    if(isredirection){
+      return <h1>Redirecting to Login</h1>
+    }
+
+    useEffect(()=>{
+      if(isAuthenticated){
+        navigate('/dashboard');
+      }
+
+      
+    },[isAuthenticated])
   return (
     <div className='register-container border-2px border-solid h-full w-full bg-[#4e311b]  p-5'>
       <h1>register</h1>

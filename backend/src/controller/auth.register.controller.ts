@@ -15,7 +15,7 @@ export const registerController = async (req:Request, res:Response) =>{
     if(username && email && phoneno && password){
             const isStored = await userModel.create(userObj);
             if(isStored){
-                return res.status(201).json({success: true , data:isStored});
+                return res.status(201).json({success: true});
             }
     }
     // console.log("someone called me", username,email, phoneno, password , req.body);

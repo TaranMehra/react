@@ -1,19 +1,19 @@
-import { useUserData } from "./contextApi";
 import axios from "axios";
 
-export const useSecureTokenAxCustomHooks = ()=>{
-    const {userAuthObj} =  useUserData();
+// export const useSecureTokenAxCustomHooks = (token:string)=>{
 
-    const axSecure = axios.create({
-        baseURL:"https://dummyjson.com",
+    export const axSecure = axios.create({
+        baseURL:"http://localhost:3000/api",
         withCredentials:true
     });
 
     axSecure.interceptors.request.use((config)=>{
-        const token = userAuthObj.accessToken;
-        config.headers.Authorization = `Bearer ${token}`;
-        return config;
-        
+        const token = localStorage.getItem('token');
+        if(token){
+            config.headers.Authorization = `Bearer ${token}`;
+            return config;
+        }
+            
     },
     (error)=>{
 
@@ -21,5 +21,5 @@ export const useSecureTokenAxCustomHooks = ()=>{
 
         })
 
-    return axSecure;
-}
+    // return axSecure;
+// }
