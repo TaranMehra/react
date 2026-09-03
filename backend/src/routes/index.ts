@@ -5,4 +5,3 @@ export const router = Router();
 
 router.use("/auth", AuthRoutes)
 router.use("/app", AppRoutes)
-console.log("AppRoutes mounted at /app");

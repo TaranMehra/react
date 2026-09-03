@@ -5,13 +5,15 @@ export interface IUser extends Document{
     email:string,
     phoneno:string,
     password:string,
+    refreshToken?:string,
 };
 
 const  userSchema = new Schema<IUser>({
     username: {type:String, required: true},
     email: {type:String, required: true},
-    phoneno: {type:String, requried:true},
-    password:{type:String, requried:true}
+    phoneno: {type:String, required:true},
+    password:{type:String, required:true},
+    refreshToken:{type:String, default: null},
 });
 
 export const userModel = model<IUser>('User', userSchema);

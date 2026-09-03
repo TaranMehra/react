@@ -17,6 +17,12 @@ export const getAuthTokenFunc = async <T>(payload: T)=>{
   return result.data;
 }
 
+
+export const refreshToken = async()=>{
+  const result = await ax.post('/auth/refresh');
+  return result.data;
+}
+
 export const getCurrentUser = async(axSecure)=>{
   const reuslt =  await axSecure.get('/auth/me');
   return reuslt.data;
@@ -59,8 +65,8 @@ export const loginUser = async<T>(payload:T)=>{
 // const axSecure = useSecureTokenAxCustomHooks(token);
 
 //app path (secure paths)
-export const getUserDataThroughToken = async<T>(payload:T)=>{
-  const result = await axSecure.post("/app/dash/user/me", payload);
+export const getUserDataThroughToken = async()=>{
+  const result = await axSecure.post("/app/dash/user/me");
   // const result = await axSecure.get("/hello");
 return result.data;
 }

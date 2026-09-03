@@ -2,193 +2,79 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { useUserData } from '../config/api/contextApi';
+import { getUserDataThroughToken } from '../config/api/apiMethods';
 
-import {
-  getAuthTokenFunc,
-  getCurrentUser,
-  getUserDataThroughToken,
-} from '../config/api/apiMethods';
-
-
-// Types
-type userGetTokenTypePayload = {
-  username: string;
-  password: string;
-};
-
-
-function Dashboard({ children }) {
-
-  // --------------------------------------------------
-  // Context & Router
-  // --------------------------------------------------
-
+function Dashboard() {
   const {
     isAuthenticated,
     logout,
     setLoading,
     loading,
-    getToken,
-    getUsername,
-    getUserData,
     userobj,
     setUserobj,
-    setUserAuthObj,
-    userAuthObj,
   } = useUserData();
 
   const navigate = useNavigate();
 
-
   // --------------------------------------------------
-  // Local State
+  // Fetch user data once authenticated
   // --------------------------------------------------
-
-  const [email, setEmail] = useState<string>('');
-  const [data, setData] = useState();
-
-
-  // --------------------------------------------------
-  // Authentication / User Data
-  // --------------------------------------------------
-
   useEffect(() => {
-
     if (!isAuthenticated) {
-
       navigate("/auth/login");
+      return;
+    }
 
-    } else {
-
-      (async () => {
-
-        const token = getToken();
-        const username = getUsername();
-
-        console.log(
-          "are we really getting the username ",
-          username
-        );
-
-        const result = await getUserDataThroughToken({
-          username,
-          token
-        });
+    const fetchUser = async () => {
+      setLoading(true);
+      try {
+        const result = await getUserDataThroughToken(); // no args needed now
 
         if (result.success) {
-
-          console.log(
-            "with token user fetched the data successfully"
-          );
-
           setUserobj(result.data);
         }
-
-      })();
-
-    }
-
-  }, [isAuthenticated]);
-
-
-  // --------------------------------------------------
-  // Loading State
-  // --------------------------------------------------
-
-  if (loading) {
-    return <h1>loading..</h1>;
-  }
-
-
-  // --------------------------------------------------
-  // Update Authentication Token
-  // --------------------------------------------------
-
-  const userObjUpdateToken = async (e) => {
-
-    e.preventDefault();
-
-    if (userobj) {
-
-      try {
-
-        setLoading(true);
-
-        const reuslt =
-          await getAuthTokenFunc<userGetTokenTypePayload>({
-            username: userobj.username,
-            password: userobj.password,
-          });
-
-        setUserAuthObj(reuslt);
-
-        console.log(
-          "{username,password} call -> api hit -> /auth/login -> userAuthObj"
-        );
-
       } catch (error) {
-
-        throw new Error(
-          "Error While calling getAuthTOkenFunc",
-          error
-        );
-
+        console.error("Failed to fetch user data:", error);
+        // if the interceptor's refresh also failed, it already redirects to login
       } finally {
-
         setLoading(false);
-
       }
+    };
 
-    }
+    fetchUser();
+  }, [isAuthenticated, navigate, setLoading, setUserobj]);
 
+  // --------------------------------------------------
+  // Logout handler
+  // --------------------------------------------------
+  const handleLogout = (e: React.FormEvent) => {
+    e.preventDefault();
+    logout(); // no args — context handles clearing localStorage + state
+    navigate("/auth/login");
   };
 
+  // --------------------------------------------------
+  // Loading state
+  // --------------------------------------------------
+  if (loading) {
+    return <h1>Loading...</h1>;
+  }
 
   // --------------------------------------------------
   // UI
   // --------------------------------------------------
-
   return (
-
     <div>
+      <div>Dashboard</div>
 
-      <div>
-        Dashboard
-      </div>
-
-
-      <form
-        onSubmit={(e) => logout(e)}
-        className="fill-mist-600"
-      >
-
-        <label htmlFor="">
-          Hi! {userobj.username}
-        </label>
-
-        <button
-          type="submit"
-          className="bg-orange-100 p-2 rounded block"
-        >
+      <form onSubmit={handleLogout} className="fill-mist-600">
+        <label>Hi! {userobj.username}</label>
+        <button type="submit" className="bg-orange-100 p-2 rounded block">
           Log Out
         </button>
-
       </form>
-
-
-      <div>
-        Your Token : {
-          userAuthObj.accessToken
-            ? userAuthObj.accessToken
-            : "no token yet"
-        }
-      </div>
-
     </div>
-
   );
-
 }
 
 export default Dashboard;
-
