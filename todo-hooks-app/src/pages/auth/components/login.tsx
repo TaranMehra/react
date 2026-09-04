@@ -7,28 +7,19 @@ import { useUserData } from '../../../config/api/contextApi';
 
 function Login() {
 
-  // --------------------------------------------------
   // State
-  // --------------------------------------------------
-
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [submitting, setSubmitting] = useState(false); // LOCAL loading, not global
   const [error, setError] = useState<string>('');
 
 
-  // --------------------------------------------------
   // Router & Context
-  // --------------------------------------------------
-
   const navigate = useNavigate();
   const { isAuthenticated, login } = useUserData();
 
 
-  // --------------------------------------------------
   // Form Submit
-  // --------------------------------------------------
-
   const handleSubmitData = async (e: React.FormEvent) => {
 
     e.preventDefault();
@@ -56,7 +47,6 @@ function Login() {
 
           
 
-          // navigate('/dashboard');
 
         } else {
 
@@ -91,25 +81,14 @@ function Login() {
   };
 
 
-  // --------------------------------------------------
-  // Authentication Redirect
-  // --------------------------------------------------
-
-  useEffect(() => {
+// Authentication Redirect
+useEffect(() => {
 
     
-    if (isAuthenticated) {
-      navigate("/dashboard");
-    }
+  }, []);
 
-  }, [isAuthenticated]);
-
-
-  // --------------------------------------------------
-  // UI
-  // --------------------------------------------------
-
-  return (
+// UI
+return (
     <>
 
       <h1>Login</h1>

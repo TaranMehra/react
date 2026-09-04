@@ -10,7 +10,7 @@ type emailType = `${string}@${string}.${string}`;
 function Register() {
 
 
-    const {isAuthenticated ,setLoading, loading,setIsredirection, isredirection, setUserobj, userobj, setUserAuthObj, userAuthObj} = useUserData();
+    const {isAuthenticated ,setLoading, loading,setIsredirection, isredirection, setUserobj, userobj } = useUserData();
   
 
   const [username, setUsername] = useState<string>('');
@@ -99,12 +99,9 @@ const handleSubmitData = async(e) =>{
     }
 
     useEffect(()=>{
-      if(isAuthenticated){
-        navigate('/dashboard');
-      }
-
       
-    },[isAuthenticated])
+
+    },[])
   return (
     <div className='register-container border-2px border-solid h-full w-full bg-[#4e311b]  p-5'>
       <h1>register</h1>
