@@ -14,17 +14,13 @@ function Dashboard() {
     setUserobj,
   } = useUserData();
 
-  const navigate = useNavigate();
+  const [pageLoading, setPageLoading] = useState<boolean>(true);
+  // const navigate = useNavigate();
 
   // Fetch user data once authenticated
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/auth/login");
-      return;
-    }
-
     const fetchUser = async () => {
-      setLoading(true);
+      setPageLoading(true);
       try {
         const result = await getUserDataThroughToken(); // no args needed now
 
@@ -35,22 +31,22 @@ function Dashboard() {
         console.error("Failed to fetch user data:", error);
         // if the interceptor's refresh also failed, it already redirects to login
       } finally {
-        setLoading(false);
+        setPageLoading(false);
       }
     };
 
     fetchUser();
-  }, [isAuthenticated, navigate, setLoading, setUserobj]);
+  }, [ setPageLoading, setUserobj]);
 
   // Logout handler
   const handleLogout = (e: React.FormEvent) => {
     e.preventDefault();
     logout(); // no args — context handles clearing localStorage + state
-    navigate("/auth/login");
+    // navigate("/auth/login");
   };
 
   // Loading state
-  if (loading) {
+  if (pageLoading) {
     return <h1>Loading...</h1>;
   }
 

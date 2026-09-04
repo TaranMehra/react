@@ -1,13 +1,13 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 
-function DashboardLayout() {
+function AppLayout() {
   return (
 
-        <div>DashboardLayout
+        <div>APPLayout
           <Outlet/>
           </div>
   )
 }
 
-export default DashboardLayout
+export default AppLayout
