@@ -1,102 +1,72 @@
-import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router'
-import { getCookieFunc } from '../context/createCookie';
-import { useState } from 'react';
-import { useUserData } from '../config/api/contextApi';
-import { getAuthTokenFunc, getCurrentUser,} from '../config/api/apiMethods';
-import { resume } from 'react-dom/server';
-import { useSecureTokenAxCustomHooks } from '../config/api/axiosSecure';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 
-type userGetTokenTypePayload = { username: string, password: string };
+import { useUserData } from '../config/api/contextApi';
+import { getUserDataThroughToken } from '../config/api/apiMethods';
 
 function Dashboard() {
+  const {
+    isAuthenticated,
+    logout,
+    setLoading,
+    loading,
+    userobj,
+    setUserobj,
+  } = useUserData();
 
-  const { setLoading, loading, getUserData, userobj, setUserobj, setUserAuthObj, userAuthObj } = useUserData();
   const navigate = useNavigate();
-  const [email, setEmail] = useState<string>('');
-  const [data, setData] = useState();
 
-
-  //  console.log("The Result ont useEffect Dashboard :" , userobj);
-  const axSecure = useSecureTokenAxCustomHooks();
-
+  // Fetch user data once authenticated
   useEffect(() => {
-
-    
-    if (!userobj) {
-      navigate('/auth/login');
+    if (!isAuthenticated) {
+      navigate("/auth/login");
+      return;
     }
-    
-    (async()=>{
 
-      if(userAuthObj.accessToken){
-        console.log("get token ");
-        console.log("token into interceptors -> api hit -> /auth/me");
-        const Autheme = await getCurrentUser(axSecure);
-        console.log("Authenticated User : ", Autheme);
-        // console.log(`inside IF userAuthObj : ` ,userAuthObj);
-      }
-    })();
-
-    
-  }, [userAuthObj]);
-
-
-
-  if (loading) {
-      return <h1>loading.. </h1>
-      }
-      
-
-  const userObjUpdateToken = async (e) => {
-    e.preventDefault();
-    if (userobj) {
-
+    const fetchUser = async () => {
+      setLoading(true);
       try {
-        
-        setLoading(true);
-        const reuslt = await getAuthTokenFunc<userGetTokenTypePayload>({
-          username: userobj.username,
-          password: userobj.password,
-        })
-        setUserAuthObj(reuslt);
+        const result = await getUserDataThroughToken(); // no args needed now
 
-        console.log("{username,password} call -> api hit -> /auth/login -> userAuthObj")
-
-       
+        if (result.success) {
+          setUserobj(result.data);
+        }
       } catch (error) {
-        throw new Error ("Error While calling getAuthTOkenFunc", error);
-        
+        console.error("Failed to fetch user data:", error);
+        // if the interceptor's refresh also failed, it already redirects to login
+      } finally {
+        setLoading(false);
       }
-      finally{
-        setLoading(false)
-      }
+    };
 
-      // if(!loading){
+    fetchUser();
+  }, [isAuthenticated, navigate, setLoading, setUserobj]);
 
-      //   console.log("USER OBJ WITHOUT TOKENnnnnnnn : ", userAuthObj);
-      // }        
+  // Logout handler
+  const handleLogout = (e: React.FormEvent) => {
+    e.preventDefault();
+    logout(); // no args — context handles clearing localStorage + state
+    navigate("/auth/login");
+  };
 
-    }
-
+  // Loading state
+  if (loading) {
+    return <h1>Loading...</h1>;
   }
 
-
-
+  // UI
   return (
+    <div>
+      <div>Dashboard</div>
 
-
-    <div>Dashboard
-
-      <form onSubmit={(e) => userObjUpdateToken(e)} className='fill-mist-600'>
-        <label htmlFor="">Hi! {userobj.username}</label>
-        <button type="submit" className='bg-orange-100 p-2 rounded block'>Get Token</button>
+      <form onSubmit={handleLogout} className="fill-mist-600">
+        <label>Hi! {userobj.username}</label>
+        <button type="submit" className="bg-orange-100 p-2 rounded block">
+          Log Out
+        </button>
       </form>
-
-      <div>Your Token :  {userAuthObj.accessToken ? userAuthObj.accessToken : "no token yet"}</div>
-
     </div>
-  )
+  );
 }
 
-export default Dashboard
+export default Dashboard;

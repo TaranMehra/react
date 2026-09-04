@@ -1,71 +1,201 @@
-import React, { useEffect, useState } from 'react'
-import { getUserObj } from '../../../config/api/apiMethods';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+
+import { loginUser } from '../../../config/api/apiMethods';
 import { useUserData } from '../../../config/api/contextApi';
 
-interface UserType {
-  username: string,
-  email:string,
-  age:number,
-  password:string,
-  firstName:string,
-  lastName?:string,
-  [key:string]: unknown
- }
+
 function Login() {
 
-  // const [userobj, setUserobj] = useState<Record<string , number | string | object>>({}); //completely unknown from a obj
+  // --------------------------------------------------
+  // State
+  // --------------------------------------------------
+
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [submitting, setSubmitting] = useState(false); // LOCAL loading, not global
+  const [error, setError] = useState<string>('');
 
 
-  
-  // const [userobj, setUserobj] = useState<UserType>({
-  //         username: ' ',
-  //         email: ' ',
-  //         age: 0,
-  //         password:' ',
-  //         firstName: ' ',
-     
-  // }); //hybrid -> when i know little what would in obj
+  // --------------------------------------------------
+  // Router & Context
+  // --------------------------------------------------
 
-  
-  const {setLoading, loading, setUserobj, userobj, setUserAuthObj, userAuthObj} = useUserData();
+  const navigate = useNavigate();
+  const { isAuthenticated, login } = useUserData();
 
-  useEffect(()=>{
 
-    (async()=>{
+  // --------------------------------------------------
+  // Form Submit
+  // --------------------------------------------------
 
-      try {
-        setLoading(true)
-        const result  = await getUserObj();
-        setUserobj(result);
-        console.log("/user/3 page -> fetching a user and store in userobj ", result)
-       console.log("userobj avaliable into context  ")
+  const handleSubmitData = async (e: React.FormEvent) => {
 
-        // console.log(result)
-        
-      } catch (error) {
-         throw new Error ("Error While Fething the UserObj at login : ", error)
+    e.preventDefault();
+
+    setError('');
+    setSubmitting(true);
+
+    try {
+
+      const result = await loginUser({
+        username,
+        password
+      });
+
+
+      if (result.success && result.accessToken && result.refreshToken) {
+
+        await login(result.accessToken, result.refreshToken, result.username); // sync — updates context + setting the token into localStorage
+        console.log(
+            "login at response : ",
+            result
+          );
+
+        if (isAuthenticated) {
+
+          
+
+          // navigate('/dashboard');
+
+        } else {
+
+          setError(
+            'Login succeeded but token could not be stored.'
+          );
+
+        }
+
+      } else {
+
+        setError(
+          result.message || 'Invalid username or password.'
+        );
+
       }
-      finally{
-        setLoading(false)
-      }
 
-    })();
-  },[])
+    } catch (err) {
 
-  if(loading){
-    return <h1>Loading .....</h1>
-  } 
+      console.error('Login error:', err);
 
+      setError(
+        'Something went wrong. Please try again.'
+      );
+
+    } finally {
+
+      setSubmitting(false);
+
+    }
+
+  };
+
+
+  // --------------------------------------------------
+  // Authentication Redirect
+  // --------------------------------------------------
+
+  useEffect(() => {
+
+    
+    if (isAuthenticated) {
+      navigate("/dashboard");
+    }
+
+  }, [isAuthenticated]);
+
+
+  // --------------------------------------------------
+  // UI
+  // --------------------------------------------------
 
   return (
-    <div>
-      login
+    <>
+
+      <h1>Login</h1>
 
 
-      <h1>Hi { userobj.username }</h1>
-    </div>
-    
-  )
+      <div className="register-container border-2px border-solid h-full w-full bg-[#4e311b] p-5">
+
+        <div className="form-container">
+
+          <form
+            className="grid gap-2 w-2xl"
+            onSubmit={handleSubmitData}
+          >
+
+            {/* Username */}
+
+            <div className="div flex flex-col">
+
+              <label htmlFor="username">
+                Enter Your Name
+              </label>
+
+              <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Taranpreet"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="border-2 rounded"
+                required
+              />
+
+            </div>
+
+
+            {/* Password */}
+
+            <label
+              htmlFor="password"
+              className="mt-5"
+            >
+              Enter Password
+            </label>
+
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Atleast 4-5 letters, alphanumeric"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="border-2 rounded"
+              required
+            />
+
+
+            {/* Error */}
+
+            {error && (
+              <p className="text-red-500 text-sm">
+                {error}
+              </p>
+            )}
+
+
+            {/* Submit */}
+
+            <button
+              type="submit"
+              disabled={submitting}
+              className="pointer border-2 w-min p-1 rounded-2xl"
+            >
+              {submitting ? 'Logging in...' : 'Submit'}
+            </button>
+
+          </form>
+
+        </div>
+
+      </div>
+
+    </>
+  );
+
 }
 
-export default Login
+
+export default Login;
