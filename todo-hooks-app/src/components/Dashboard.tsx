@@ -61,6 +61,13 @@ function Dashboard() {
           Log Out
         </button>
       </form>
+
+      {/* <form onSubmit={} className="fill-mist-600">
+        <label>Hi! {userobj.username}</label>
+        <button type="submit" className="bg-orange-100 p-2 rounded block">
+          Log Out
+        </button>
+      </form> */}
     </div>
   );
 }

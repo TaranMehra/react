@@ -38,3 +38,9 @@ export const fetchSecureMessage = async()=>{
   // const result = await axSecure.get("/hello");
 return result.data;
 }
+
+export const changeBioApi = async()=>{
+  const result = await axSecure.get("/app/profile/user/bio");
+  // const result = await axSecure.get("/hello");
+return result.data;
+}
