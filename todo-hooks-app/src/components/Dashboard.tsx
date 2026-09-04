@@ -16,9 +16,7 @@ function Dashboard() {
 
   const navigate = useNavigate();
 
-  // --------------------------------------------------
   // Fetch user data once authenticated
-  // --------------------------------------------------
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/auth/login");
@@ -44,25 +42,19 @@ function Dashboard() {
     fetchUser();
   }, [isAuthenticated, navigate, setLoading, setUserobj]);
 
-  // --------------------------------------------------
   // Logout handler
-  // --------------------------------------------------
   const handleLogout = (e: React.FormEvent) => {
     e.preventDefault();
     logout(); // no args — context handles clearing localStorage + state
     navigate("/auth/login");
   };
 
-  // --------------------------------------------------
   // Loading state
-  // --------------------------------------------------
   if (loading) {
     return <h1>Loading...</h1>;
   }
 
-  // --------------------------------------------------
   // UI
-  // --------------------------------------------------
   return (
     <div>
       <div>Dashboard</div>

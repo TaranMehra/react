@@ -11,7 +11,7 @@ import Marketing from "../pages/marketing/Marketing";
 
 
 export const router = createBrowserRouter([
-
+                                        
     {
         path:"/",
         element:<RootLayout/>,

@@ -25,13 +25,13 @@ export const loginController = async (req: Request, res: Response) => {
   const accessToken = jwt.sign(
     { username: data.username },
     process.env.ACCESS_TOKEN_SECRET as string,
-    { expiresIn: "15m" }
+    { expiresIn: "20s" }
   );
 
   const refreshToken = jwt.sign(
     { username: data.username },
     process.env.REFRESH_TOKEN_SECRET as string,
-    { expiresIn: "7d" }
+    { expiresIn: "40s" }
   );
 
   data.refreshToken = refreshToken; // fixed typo

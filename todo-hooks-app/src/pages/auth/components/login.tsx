@@ -47,15 +47,16 @@ function Login() {
       if (result.success && result.accessToken && result.refreshToken) {
 
         await login(result.accessToken, result.refreshToken, result.username); // sync — updates context + setting the token into localStorage
+        console.log(
+            "login at response : ",
+            result
+          );
 
         if (isAuthenticated) {
 
-          // console.log(
-          //   "isAuthenticated after loginUser : ",
-          //   isAuthenticated
-          // );
+          
 
-          navigate('/dashboard');
+          // navigate('/dashboard');
 
         } else {
 

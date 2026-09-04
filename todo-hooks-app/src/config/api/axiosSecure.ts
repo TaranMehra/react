@@ -1,5 +1,5 @@
 import axios from "axios";
-import { refreshToken } from "./apiMethods";
+import { getrefreshToken } from "./apiMethods";
 
 // export const useSecureTokenAxCustomHooks = (token:string)=>{
 
@@ -31,18 +31,23 @@ import { refreshToken } from "./apiMethods";
                 if (error.response?.status === 401 && !originalRequest._retry) {
                    originalRequest._retry = true;
 
+                   console.log("Got the 401 error now fetching accessToken through refreshToken")
                     try {
-                     
-                     const res = await refreshToken();
+
+                      const refreshToken = localStorage.getItem('refreshToken');
+                      const res = await getrefreshToken({refreshToken});
 
                       const newAccessToken = res.accessToken;
                       localStorage.setItem("accessToken", newAccessToken);
+                       console.log("Got the refreshToken", refreshToken);
+
                       originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
                        return axSecure(originalRequest);
                       } catch (refreshError) {
 
                       localStorage.removeItem("accessToken");
-                      window.location.href = "/login";
+                      localStorage.removeItem("refreshToken");
+                      window.location.href = "/auth/login";
                       return Promise.reject(refreshError);
                       }
                       }

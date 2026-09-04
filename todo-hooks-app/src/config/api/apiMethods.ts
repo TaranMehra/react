@@ -1,44 +1,5 @@
 import { ax } from "./axiosOpen"
 import { axSecure } from "./axiosSecure";
-// import { useSecureTokenAxCustomHooks } from "./axiosSecure";
-import { useUserData } from "./contextApi";
-// 
-
-
-//login page exec
-export const getUserObj = async()=>{
-  const result = await ax.get('/user/3');
-    return result.data;
-}
-
-//dashboard page exec
-export const getAuthTokenFunc = async <T>(payload: T)=>{
-  const result = await ax.post('/auth/login', payload);
-  return result.data;
-}
-
-
-export const refreshToken = async()=>{
-  const result = await ax.post('/auth/refresh');
-  return result.data;
-}
-
-export const getCurrentUser = async(axSecure)=>{
-  const reuslt =  await axSecure.get('/auth/me');
-  return reuslt.data;
-}
-
-
-type apiReturnUserAuthType = {
-  username : string,
-  email:string,
-  phoneno:string,
-  password:string,
-}
-interface apiReturnUserAuthi {
-  userObj?: apiReturnUserAuthType,
-  status:{statusCode:number, message: string, origin:string},
-}
 
 //my own user
 export const testapi = async()=>{
@@ -58,15 +19,22 @@ export const loginUser = async<T>(payload:T)=>{
   return result.data;
 }
 
+export const getrefreshToken = async(payload)=>{
+  const result = await ax.post('/auth/refresh', payload);
+  return result.data;
+}
 
-
-// const {getToken} = useUserData();
-// const token = getToken()
-// const axSecure = useSecureTokenAxCustomHooks(token);
 
 //app path (secure paths)
 export const getUserDataThroughToken = async()=>{
-  const result = await axSecure.post("/app/dash/user/me");
+  const result = await axSecure.get("/app/dash/user/me");
+  // const result = await axSecure.get("/hello");
+return result.data;
+}
+
+
+export const fetchSecureMessage = async()=>{
+  const result = await axSecure.get("/app/dash/user/msg");
   // const result = await axSecure.get("/hello");
 return result.data;
 }
