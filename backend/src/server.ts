@@ -3,12 +3,26 @@ import  {config}  from 'dotenv';
 import cors from 'cors';
 import { router } from './routes/index.js';
 import { createDBConnection } from './lib/dbConnection.js';
+import http from 'node:http';
+import {Server} from 'socket.io'
+
+
 
 
 config();
 
 
 const app = express();
+
+const httpServer = http.createServer(app);
+
+//socket instance functions
+export const socketInstanceMain = () =>{
+    const io = new Server(httpServer);
+    return io;
+}
+
+
 
 app.use(
     cors({
@@ -35,7 +49,7 @@ const port = process.env.PORT || 3000;
 
 
 
-app.listen(port, ()=> { 
+httpServer.listen(port, ()=> { 
         console.log(`Server running on ${port}`);
 })
 console.log("wokring")

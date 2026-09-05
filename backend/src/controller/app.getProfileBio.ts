@@ -17,6 +17,6 @@ export const appGetProfileBioController = async (req: Request, res: Response) =>
   if (data) {
     return res.status(405).json({ success: true, data });
   } else {
-    return res.status(404).json({ success: false, message: "Unable to fetch the user, please try again later" });
+    return res.status(500).json({ success: false, message: "Unable to fetch the user, please try again later" });
   }
 };
